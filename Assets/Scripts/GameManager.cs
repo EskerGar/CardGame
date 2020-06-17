@@ -8,15 +8,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] private ConfigSo configs;
     [SerializeField] private GameObject cardPrefab;
     public static GameManager Instance { get; private set; }
-
-    private Vector2 _offset = new Vector2(1.79f, -1.79f);
-    private List<Sprite> spriteList;
+    
+    private List<Sprite> _spriteList;
 
     private void Awake()
     {
         if (Instance != null)
             Instance = this;
-        spriteList = configs.GetSpriteList;
+        _spriteList = configs.GetSpriteList;
     }
 
     private void Start()
@@ -27,11 +26,13 @@ public class GameManager : MonoBehaviour
     private void GenerateCards()
     {
         var startPos = configs.GetStartCord;
-        for (int i = 0; i < spriteList.Count; i++)
+        var fieldProperty = configs.GetFieldProperty;
+        var offset = configs.GetOffsetCord;
+        for (int i = 0; i < fieldProperty.rowsAmount; i++)
         {
-            for(int j = 0; j < spriteList.Count; j++)
+            for(int j = 0; j < fieldProperty.columnsAmount; j++)
             {
-                Instantiate(cardPrefab, startPos + _offset * new Vector2(j, i), Quaternion.identity);
+                Instantiate(cardPrefab, startPos + offset * new Vector2(j, i), Quaternion.identity);
             }
         }
     }

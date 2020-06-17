@@ -10,6 +10,7 @@ public class ConfigSo : ScriptableObject
     [SerializeField] private float timeToFlip;
     [SerializeField] private int healthAmount;
     [SerializeField] private Vector2 startCord = new Vector2(-1.8f, 3.92f);
+    [SerializeField] private Vector2 offestCord = new Vector2(1.79f, -1.79f);
     [SerializeField] private FieldProperty fieldProperty;
     public List<Sprite> GetSpriteList => spriteList;
 
@@ -18,9 +19,13 @@ public class ConfigSo : ScriptableObject
     public int GetHealthCount => healthAmount;
 
     public Vector2 GetStartCord => startCord;
+
+    public FieldProperty GetFieldProperty => fieldProperty;
+
+    public Vector2 GetOffsetCord => offestCord;
     
     [Serializable]
-    private class FieldProperty
+    public class FieldProperty
     {
         public int columnsAmount;
         public int rowsAmount;

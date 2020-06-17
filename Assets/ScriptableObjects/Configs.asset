@@ -12,6 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a60e427d6b2762f4a909e2ee9074d06a, type: 3}
   m_Name: Configs
   m_EditorClassIdentifier: 
-  spriteList: []
-  timeToFlip: 0
-  healthCount: 0
+  spriteList:
+  - {fileID: 21300000, guid: e1666f3887b9b3c42905f4ba2bd993ea, type: 3}
+  - {fileID: 21300000, guid: 0aafee956cc3323419d58706d48301a0, type: 3}
+  - {fileID: 21300000, guid: 0dba1370aeccef4458be086efa4701ee, type: 3}
+  - {fileID: 21300000, guid: ba5ae2682fe7f6d48bce0823b5a099be, type: 3}
+  - {fileID: 21300000, guid: fa9b69220f958ab4f9aa79ad5a725b2c, type: 3}
+  timeToFlip: 3
+  healthAmount: 5
+  startCord: {x: -1.8, y: 3.92}
+  fieldProperty:
+    columnsAmount: 3
+    rowsAmount: 4
