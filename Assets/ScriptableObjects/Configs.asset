@@ -21,6 +21,7 @@ MonoBehaviour:
   timeToFlip: 3
   healthAmount: 5
   startCord: {x: -1.8, y: 3.92}
+  offestCord: {x: 1.79, y: -1.79}
   fieldProperty:
     columnsAmount: 3
-    rowsAmount: 4
+    rowsAmount: 5

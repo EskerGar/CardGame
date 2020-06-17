@@ -6,8 +6,10 @@ public class Card : MonoBehaviour
 {
     private GameManager _gameManager;
     private SpriteRenderer _spriteRenderer;
-    private void Start()
+    public void Initialize()
     {
         _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
+
+    public  void ChangeSprite(Sprite sprite) => _spriteRenderer.sprite = sprite;
 }
