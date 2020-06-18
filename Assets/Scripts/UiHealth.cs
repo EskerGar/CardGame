@@ -20,7 +20,7 @@ public class UiHealth : MonoBehaviour
    private void GenerateHearts()
    {
        var heartCount = _health.CurrentHealth;
-       Vector3 offset = new Vector2(.55f, 0);
+       Vector3 offset = new Vector2(.5f, 0);
        var heart = CreateHeart(transform.position);
        for (int i = 0; i < heartCount - 1; i++)
            heart = CreateHeart( heart.transform.position + offset);

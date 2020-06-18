@@ -23,7 +23,6 @@ public class GameManager : MonoBehaviour
     private Health _health;
     private Points _points;
     private int _damage = 1;
-    private float _startTImeForFlip = 3;
     private GameObject _lastCard;
 
     public event Action<bool> OnEndGame; 
@@ -142,7 +141,7 @@ public class GameManager : MonoBehaviour
     {
         IsBlockedControll = true;
         var allCards = _cardsDictionary.Keys.Select(card => card.GetComponent<Card>()).ToList();
-        yield return new WaitForSeconds(_startTImeForFlip);
+        yield return new WaitForSeconds(configs.GetTimeToFlip);
         foreach (var card in allCards)
             card.BackFlipCard();
         IsBlockedControll = false;
