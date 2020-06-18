@@ -19,14 +19,14 @@ public class Card : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (GameManager.Instance.IsBlockedControll) return;
         FlipCard();
         GameManager.Instance.FlipCard(gameObject);
     }
 
-    public void FlipCard()
-    {
-        _anim.SetBool(mouseDown, true);
-    }
+    public void FlipCard() => _anim.SetBool(mouseDown, true);
+
+    public void BackFlipCard() => _anim.SetBool(mouseDown, false);
 
     public void DeleteCard()
     {

@@ -7,7 +7,7 @@ public class Health : MonoBehaviour
 {
     public int CurrentHealth { get; private set; }
 
-    public event Action OnDeath;
+    public event Action OnDeath, OnHealthDecrease;
 
     public void Initialize(ConfigSo configs)
     {
@@ -15,12 +15,14 @@ public class Health : MonoBehaviour
     }
     private void ProcessChange(int amount)
     {
+        var prevHealth = CurrentHealth;
         CurrentHealth += amount;
-        if(CurrentHealth <= 0)
-            OnOnDeath();
+        if(CurrentHealth < prevHealth)
+            OnHealthDecrease?.Invoke();
+        if (CurrentHealth <= 0)
+            OnDeath?.Invoke();
     }
 
     public void TakeDamage(int damage) => ProcessChange(-damage);
-
-    private void OnOnDeath() => OnDeath?.Invoke();
+    
 }

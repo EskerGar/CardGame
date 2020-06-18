@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
 
     private const int OPEN_CARD_NUMBER = 3;
     public static GameManager Instance { get; private set; }
+    public bool IsBlockedControll { get; private set; }
 
     private List<Sprite> _spriteList;
     private readonly Dictionary<GameObject, Sprite> _cardsDictionary = new Dictionary<GameObject, Sprite>();
@@ -21,8 +22,10 @@ public class GameManager : MonoBehaviour
     private Health _health;
     private Points _points;
     private int _damage = 1;
+    private float _startWaitForFlipTime = 3;
 
     public Points GetPointClass => _points;
+    public Health GetHealthClass => _health;
 
     private void Awake()
     {
@@ -39,6 +42,7 @@ public class GameManager : MonoBehaviour
     {
         GenerateCards();
         _health.OnDeath += Loss;
+        StartCoroutine(StartGame());
     }
 
     private Sprite RandomSprite(Dictionary<Sprite, int> spriteCount, int cardsWithSprite)
@@ -80,7 +84,7 @@ public class GameManager : MonoBehaviour
     private void StackClear(IEnumerable collect)
     {
         foreach (var openedCard in openedCardsStack)
-            openedCard.GetComponent<Card>().FlipCard();
+            openedCard.GetComponent<Card>().BackFlipCard();
         openedCardsStack.Clear();
     }
 
@@ -92,6 +96,7 @@ public class GameManager : MonoBehaviour
             if (!_cardsDictionary[card].Equals(_cardsDictionary[prevCard]))
             {
                 StackClear(openedCardsStack);
+                card.GetComponent<Card>().FlipCard();
                 _health.TakeDamage(_damage);
             }
         }
@@ -106,6 +111,17 @@ public class GameManager : MonoBehaviour
 
     private void Loss()
     {
-        
+        Time.timeScale = 0;
+    }
+
+    private IEnumerator StartGame()
+    {
+        IsBlockedControll = true;
+        foreach (var card in _cardsDictionary)
+            card.Key.GetComponent<Card>().FlipCard();
+        yield return new WaitForSeconds(_startWaitForFlipTime);
+        foreach (var card in _cardsDictionary)
+            card.Key.GetComponent<Card>().BackFlipCard();
+        IsBlockedControll = false;
     }
 }

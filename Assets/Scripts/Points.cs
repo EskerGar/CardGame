@@ -31,12 +31,7 @@ public class Points : MonoBehaviour
     private void ProcessChangeScore(float amount)
     {
         currentScore += amount;
-        OnOnChangeScore(currentScore);
+        OnChangeScore?.Invoke(currentScore);
 
-    }
-
-    private void OnOnChangeScore(float score)
-    {
-        OnChangeScore?.Invoke(score);
     }
 }
