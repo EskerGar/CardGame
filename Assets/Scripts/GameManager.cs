@@ -10,14 +10,19 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private ConfigSo configs;
     [SerializeField] private GameObject cardPrefab;
-    public static GameManager Instance { get; private set; }
-    public GameObject GetCardPrefab => cardPrefab;
 
-    public ConfigSo GetConfigs => configs;
-    
+    private const int OPEN_CARD_NUMBER = 3;
+    public static GameManager Instance { get; private set; }
+
     private List<Sprite> _spriteList;
-    private Dictionary<GameObject, Sprite> _cardsDictionary = new Dictionary<GameObject, Sprite>();
+    private readonly Dictionary<GameObject, Sprite> _cardsDictionary = new Dictionary<GameObject, Sprite>();
     private ConfigSo.FieldProperty _fieldProperty;
+    private readonly Stack<GameObject> openedCardsStack = new Stack<GameObject>();
+    private Health _health;
+    private Points _points;
+    private int _damage = 1;
+
+    public Points GetPointClass => _points;
 
     private void Awake()
     {
@@ -25,11 +30,15 @@ public class GameManager : MonoBehaviour
             Instance = this;
         _spriteList = configs.GetSpriteList;
         _fieldProperty = configs.GetFieldProperty;
+        _health = GetComponent<Health>();
+        _points = GetComponent<Points>();
+        _health.Initialize(configs);
     }
 
     private void Start()
     {
         GenerateCards();
+        _health.OnDeath += Loss;
     }
 
     private Sprite RandomSprite(Dictionary<Sprite, int> spriteCount, int cardsWithSprite)
@@ -46,7 +55,7 @@ public class GameManager : MonoBehaviour
     private void GenerateCards()
     {
         var fieldSize = _fieldProperty.columnsAmount * _fieldProperty.rowsAmount;
-        Assert.IsTrue(fieldSize % _spriteList.Count == 0, "Field size should be devided by the number of sprites");
+        Assert.IsTrue(fieldSize % OPEN_CARD_NUMBER == 0, "Field size should be devided by the number of sprites");
         var cardsWithSprite = fieldSize / _spriteList.Count; 
         var spriteCount = _spriteList.ToDictionary(sprite => sprite, sprite => 0);
         for (int i = 0; i < _fieldProperty.rowsAmount; i++)
@@ -58,5 +67,45 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    
+
+    private void DeleteCards(IEnumerable collect)
+    {
+        foreach (GameObject card in collect)
+        {
+            _cardsDictionary.Remove(card);
+            card.GetComponent<Card>().DeleteCard();
+        }
+    }
+
+    private void StackClear(IEnumerable collect)
+    {
+        foreach (var openedCard in openedCardsStack)
+            openedCard.GetComponent<Card>().FlipCard();
+        openedCardsStack.Clear();
+    }
+
+    public void FlipCard(GameObject card) 
+    {
+        if (openedCardsStack.Count > 0)
+        {
+            var prevCard = openedCardsStack.Peek();
+            if (!_cardsDictionary[card].Equals(_cardsDictionary[prevCard]))
+            {
+                StackClear(openedCardsStack);
+                _health.TakeDamage(_damage);
+            }
+        }
+        openedCardsStack.Push(card);
+        if(openedCardsStack.Count == 2)
+            _points.AddPoints(_health.CurrentHealth);
+        if (openedCardsStack.Count != OPEN_CARD_NUMBER) return;
+        DeleteCards(openedCardsStack);
+        _points.AddPoints(3 * _health.CurrentHealth);
+        openedCardsStack.Clear();
+    }
+
+    private void Loss()
+    {
+        
+    }
 }

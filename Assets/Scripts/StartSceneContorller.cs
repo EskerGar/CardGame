@@ -9,7 +9,7 @@ public class StartSceneContorller : MonoBehaviour
         
     void Start()
     {
-        bestScore.GetComponent<ViewScore>().ShowScore(Records.BestScore);
+        bestScore.GetComponent<ViewScore>().ShowScore(Points.BestScore);
     }
     
 }

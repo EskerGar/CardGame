@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
-    private GameManager _gameManager;
     private SpriteRenderer _spriteRenderer;
-    private bool _cardFlip = false;
     private Animator _anim;
+    private readonly int mouseDown = Animator.StringToHash("MouseDown");
+
     public void Initialize()
     {
         _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -19,7 +19,23 @@ public class Card : MonoBehaviour
 
     private void OnMouseDown()
     {
-        _cardFlip = !_cardFlip;
-        _anim.SetBool("MouseDown", _cardFlip);
+        FlipCard();
+        GameManager.Instance.FlipCard(gameObject);
+    }
+
+    public void FlipCard()
+    {
+        _anim.SetBool(mouseDown, true);
+    }
+
+    public void DeleteCard()
+    {
+        StartCoroutine(DeleteCardCoroutine());
+    }
+
+    private IEnumerator DeleteCardCoroutine()
+    {
+        yield return new WaitForSeconds(1f);
+        Destroy(gameObject);
     }
 }
