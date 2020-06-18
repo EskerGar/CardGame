@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private ConfigSo configs;
     [SerializeField] private GameObject cardPrefab;
 
-    private const int OPEN_CARD_NUMBER = 3;
+    private const int OpenCardNumber = 3;
     public static GameManager Instance { get; private set; }
     public bool IsBlockedControll { get; private set; }
     private bool _isWin;
@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
     private void GenerateCards()
     {
         var fieldSize = _fieldProperty.columnsAmount * _fieldProperty.rowsAmount;
-        Assert.IsTrue(fieldSize % OPEN_CARD_NUMBER == 0, "Field size should be devided by the number of sprites");
+        Assert.IsTrue(fieldSize % OpenCardNumber == 0, "Field size should be devided by the number of sprites");
         var cardsWithSprite = fieldSize / _spriteList.Count; 
         var spriteCount = _spriteList.ToDictionary(sprite => sprite, sprite => 0);
         for (int i = 0; i < _fieldProperty.rowsAmount; i++)
@@ -119,7 +119,7 @@ public class GameManager : MonoBehaviour
         if(openedCardsStack.Count == 2)
             _points.AddPoints(_health.CurrentHealth);
         
-        if (openedCardsStack.Count != OPEN_CARD_NUMBER) return;
+        if (openedCardsStack.Count != OpenCardNumber) return;
         
         _points.AddPoints(3 * _health.CurrentHealth);
         DeleteCards(openedCardsStack);
