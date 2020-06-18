@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     private const int OPEN_CARD_NUMBER = 3;
     public static GameManager Instance { get; private set; }
     public bool IsBlockedControll { get; private set; }
+    public bool IsWin { get; private set; } = false;
 
     private List<Sprite> _spriteList;
     private readonly Dictionary<GameObject, Sprite> _cardsDictionary = new Dictionary<GameObject, Sprite>();
@@ -22,7 +23,7 @@ public class GameManager : MonoBehaviour
     private Health _health;
     private Points _points;
     private int _damage = 1;
-    private float _startWaitForFlipTime = 3;
+    private float _startTImeForFlip = 3;
 
     public Points GetPointClass => _points;
     public Health GetHealthClass => _health;
@@ -41,7 +42,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         GenerateCards();
-        _health.OnDeath += Loss;
+        _health.OnDeath += EndGame;
         StartCoroutine(StartGame());
     }
 
@@ -95,33 +96,40 @@ public class GameManager : MonoBehaviour
             var prevCard = openedCardsStack.Peek();
             if (!_cardsDictionary[card].Equals(_cardsDictionary[prevCard]))
             {
+                openedCardsStack.Push(card);
                 StackClear(openedCardsStack);
-                card.GetComponent<Card>().FlipCard();
                 _health.TakeDamage(_damage);
             }
+            else if (!openedCardsStack.Peek().Equals(card))
+                openedCardsStack.Push(card);
         }
-        openedCardsStack.Push(card);
+        else
+            openedCardsStack.Push(card);
+
         if(openedCardsStack.Count == 2)
             _points.AddPoints(_health.CurrentHealth);
+        
         if (openedCardsStack.Count != OPEN_CARD_NUMBER) return;
+        
         DeleteCards(openedCardsStack);
         _points.AddPoints(3 * _health.CurrentHealth);
         openedCardsStack.Clear();
     }
 
-    private void Loss()
+    private void EndGame()
     {
         Time.timeScale = 0;
+        if (_health.CurrentHealth > 0)
+            IsWin = true;
     }
-
+    
     private IEnumerator StartGame()
     {
         IsBlockedControll = true;
-        foreach (var card in _cardsDictionary)
-            card.Key.GetComponent<Card>().FlipCard();
-        yield return new WaitForSeconds(_startWaitForFlipTime);
-        foreach (var card in _cardsDictionary)
-            card.Key.GetComponent<Card>().BackFlipCard();
+        var allCards = _cardsDictionary.Keys.Select(card => card.GetComponent<Card>()).ToList();
+        yield return new WaitForSeconds(_startTImeForFlip);
+        foreach (var card in allCards)
+            card.BackFlipCard();
         IsBlockedControll = false;
     }
 }
