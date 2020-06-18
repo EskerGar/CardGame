@@ -9,6 +9,8 @@ public class Points : MonoBehaviour
     private float currentScore;
 
     public event Action<float> OnChangeScore;
+    public event Action OnNewBestScore;
+    public event Action<float, float> OnViewRecords; 
 
     private void Awake()
     {
@@ -18,12 +20,18 @@ public class Points : MonoBehaviour
     private void Start()
     {
         AddPoints(0);
+        GameManager.Instance.OnEndGame += CheckScore;
     }
 
-    public static void NewBestScore(float newScore)
+    private void CheckScore(bool isWin)
     {
-        BestScore = newScore;
-        PlayerPrefs.SetFloat("BestScore", BestScore);
+        if (currentScore > BestScore)
+        {
+            BestScore = currentScore;
+            PlayerPrefs.SetFloat("BestScore", BestScore);
+            OnNewBestScore?.Invoke();
+        }
+        OnViewRecords?.Invoke(BestScore, currentScore);
     }
 
     public void AddPoints(float amount) => ProcessChangeScore(amount);

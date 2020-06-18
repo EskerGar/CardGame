@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     private const int OPEN_CARD_NUMBER = 3;
     public static GameManager Instance { get; private set; }
     public bool IsBlockedControll { get; private set; }
-    public bool IsWin { get; private set; } = false;
+    private bool _isWin;
 
     private List<Sprite> _spriteList;
     private readonly Dictionary<GameObject, Sprite> _cardsDictionary = new Dictionary<GameObject, Sprite>();
@@ -24,6 +24,9 @@ public class GameManager : MonoBehaviour
     private Points _points;
     private int _damage = 1;
     private float _startTImeForFlip = 3;
+    private GameObject _lastCard;
+
+    public event Action<bool> OnEndGame; 
 
     public Points GetPointClass => _points;
     public Health GetHealthClass => _health;
@@ -73,13 +76,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void CheckWin()
+    {
+        if(_cardsDictionary.Count == 0)
+            EndGame();
+    }
+
     private void DeleteCards(IEnumerable collect)
     {
         foreach (GameObject card in collect)
         {
+            _lastCard = card;
             _cardsDictionary.Remove(card);
             card.GetComponent<Card>().DeleteCard();
         }
+        CheckWin();
     }
 
     private void StackClear(IEnumerable collect)
@@ -111,18 +122,22 @@ public class GameManager : MonoBehaviour
         
         if (openedCardsStack.Count != OPEN_CARD_NUMBER) return;
         
-        DeleteCards(openedCardsStack);
         _points.AddPoints(3 * _health.CurrentHealth);
+        DeleteCards(openedCardsStack);
         openedCardsStack.Clear();
     }
 
-    private void EndGame()
+    private void EndGame() => StartCoroutine(EndGameCoroutine());
+
+    private IEnumerator EndGameCoroutine()
     {
-        Time.timeScale = 0;
+        yield return new WaitUntil( () => _lastCard == null);
+        IsBlockedControll = true;
         if (_health.CurrentHealth > 0)
-            IsWin = true;
+            _isWin = true;
+        OnEndGame?.Invoke(_isWin);
     }
-    
+
     private IEnumerator StartGame()
     {
         IsBlockedControll = true;
