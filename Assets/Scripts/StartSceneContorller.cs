@@ -5,5 +5,9 @@ public class StartSceneContorller : MonoBehaviour
 {
     [SerializeField] private Text bestScore;
 
-    private void Start() => bestScore.GetComponent<ViewScore>().ShowScore(Points.BestScore);
+    private void Start()
+    {
+        Points.Initialize();
+        bestScore.GetComponent<ViewScore>().ShowScore(Points.BestScore);
+    }
 }

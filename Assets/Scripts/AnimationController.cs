@@ -8,23 +8,33 @@ public class AnimationController : MonoBehaviour
     private readonly int cardFlip = Animator.StringToHash("CardFlip");
     private readonly Queue<IEnumerator> animationQueue = new Queue<IEnumerator>();
     private Coroutine allAnimations;
+    private bool isBlockedControl;
     private void Awake() 
     {
         _anim = GetComponent<Animator>();
     }
 
-    public void FlipCardAnimation(bool backFlip) 
+    public void FlipCardAnimation(bool backFlip, bool blockControl)
     {
-        animationQueue.Enqueue((PlayAnimation(cardFlip, backFlip)));
+        isBlockedControl = blockControl;
+        AddAnimation(backFlip);
         if (allAnimations == null)
             allAnimations = StartCoroutine(AllAnimations());
     }
 
+    private void AddAnimation(bool backFlip) => animationQueue.Enqueue((PlayAnimation(cardFlip, backFlip)));
+
     private IEnumerator AllAnimations()
     {
         while (animationQueue.Count > 0)
+        {
+            if (isBlockedControl)
+                GameManager.Instance.IsBlockedControl = true;
             yield return StartCoroutine(animationQueue.Dequeue());
+        }
         allAnimations = null;
+        if (isBlockedControl)
+            GameManager.Instance.IsBlockedControl = false;
     }
 
     private IEnumerator PlayAnimation(int hash, bool state)

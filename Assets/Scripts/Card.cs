@@ -17,18 +17,17 @@ public class Card : MonoBehaviour
 
     private void FlipCard()
     {
-        _animController.FlipCardAnimation(false);
-        _animController.FlipCardAnimation(false);
+        _animController.FlipCardAnimation(false, false);
     }
 
     public void BackFlipCard()
     {
-        _animController.FlipCardAnimation(true);
+        _animController.FlipCardAnimation(true, true);
     }
     
     private void OnMouseDown()
     {
-        if (GameManager.Instance.IsBlockedControll) return;
+        if (GameManager.Instance.IsBlockedControl) return;
         FlipCard();
         GameManager.Instance.FlipCard(gameObject);
     }

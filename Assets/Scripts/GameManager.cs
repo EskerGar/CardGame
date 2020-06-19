@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
 
     private const int OpenCardNumber = 3;
     public static GameManager Instance { get; private set; }
-    public bool IsBlockedControll { get; private set; }
+    public bool IsBlockedControl { get; set; }
     private bool _isWin;
 
     private List<Sprite> _spriteList;
@@ -131,7 +131,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator EndGameCoroutine()
     {
         yield return new WaitUntil( () => _lastCard == null);
-        IsBlockedControll = true;
+        IsBlockedControl = true;
         if (_health.CurrentHealth > 0)
             _isWin = true;
         OnEndGame?.Invoke(_isWin);
@@ -139,11 +139,11 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator StartGame()
     {
-        IsBlockedControll = true;
+        IsBlockedControl = true;
         var allCards = _cardsDictionary.Keys.Select(card => card.GetComponent<Card>()).ToList();
         yield return new WaitForSeconds(configs.GetTimeToFlip);
         foreach (var card in allCards)
             card.BackFlipCard();
-        IsBlockedControll = false;
+        IsBlockedControl = false;
     }
 }

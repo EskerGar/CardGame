@@ -10,7 +10,7 @@ public class Points : MonoBehaviour
     public event Action OnNewBestScore;
     public event Action<float, float> OnViewRecords; 
 
-    private void Awake()
+    public static void Initialize()
     {
         BestScore = PlayerPrefs.HasKey("BestScore") ? PlayerPrefs.GetFloat("BestScore") : 0;
     }
